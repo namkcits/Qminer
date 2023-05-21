@@ -1,0 +1,86 @@
+$(document).ready(function() {
+  var encodedQubits = [];
+  var statevectors = [];
+
+  function encodeQubit(bit) {
+    var encodedQubit;
+    if (bit == 0) {
+      encodedQubit = new qiskit.Statevector([0.70710678, -0.70710678], [0, 1]);
+    } else if (bit == 1) {
+      encodedQubit = new qiskit.Statevector([0, 1], [0, 1]);
+    } else {
+      throw new Error("valid bit value");
+    }
+    encodedQubits.push(encodedQubit);
+  }
+
+  function mine() {
+    var hashrate = parseInt($("#hashrate").val());
+    for (var i = 0; i < hashrate; i++) {
+      var bit = Math.floor(Math.random() * 2);
+      encodeQubit(bit);
+    }
+  }
+
+  $("#mineBtn").click(function() {
+    encodedQubits = [];
+    statevectors = [];
+    mine();
+    encodeStatevectors();
+    storeStatevectors();
+    displayEncodedQubits();
+    displayStatevectors();
+  });
+
+  function encodeStatevectors() {
+    for (var i = 0; i < encodedQubits.length; i++) {
+      var statevector = encodedQubits[i];
+      statevectors.push(statevector);
+    }
+  }
+
+  function storeStatevectors() {
+    // Store the statevectors in Replit's database
+    $.ajax({
+      url: '/v0/storage/statevectors',
+      type: 'PUT',
+      data: JSON.stringify(statevectors),
+      contentType: 'application/json',
+      success: function() {
+        console.log('Statevectors stored successfully.');
+      },
+      error: function() {
+        console.error('Failed to store statevectors.');
+      }
+    });
+  }
+
+  function displayEncodedQubits() {
+    var encodedQubitsList = "";
+    for (var i = 0; i < encodedQubits.length; i++) {
+      encodedQubitsList += "<li>" + encodedQubits[i] + "</li>";
+    }
+    $("#encodedQubits").html(encodedQubitsList);
+  }
+
+  function displayStatevectors() {
+    var statevectorsList = "";
+    for (var i = 0; i < statevectors.length; i++) {
+      statevectorsList += "<li>" + statevectors[i] + "</li>";
+    }
+    $("#statevectors").html(statevectorsList);
+  }
+
+  // Retrieve and display the stored statevectors from Replit's database
+  $.ajax({
+    url: '/v0/storage/statevectors',
+    type: 'GET',
+    success: function(data) {
+      statevectors = JSON.parse(data);
+      displayStatevectors();
+    },
+    error: function() {
+      console.error('Failed to retrieve statevectors from the database.');
+    }
+  });
+});

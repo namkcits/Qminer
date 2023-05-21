@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Quantum Miner</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      var encodedQubits = [];
+
+      function encodeQubit(bit) {
+        var encodedQubit;
+        if (bit == 0) {
+          encodedQubit = "Encoded Qubit: 0";
+        } else if (bit == 1) {
+          encodedQubit = "Encoded Qubit: 1";
+        } else {
+          throw new Error("Invalid bit value");
+        }
+        encodedQubits.push(encodedQubit);
+      }
+
+      function mine() {
+        var hashrate = parseInt($("#hashrate").val());
+        for (var i = 0; i < hashrate; i++) {
+          var bit = Math.floor(Math.random() * 2);
+          encodeQubit(bit);
+        }
+      }
+
+      $("#mineBtn").click(function () {
+        encodedQubits = [];
+        mine();
+        displayEncodedQubits();
+      });
+
+      function displayEncodedQubits() {
+        var encodedQubitsList = "";
+        for (var i = 0; i < encodedQubits.length; i++) {
+          encodedQubitsList += "<li>" + encodedQubits[i] + "</li>";
+        }
+        $("#encodedQubits").html(encodedQubitsList);
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <h1>Quantum Miner</h1>
+  <label for="hashrate">Hashrate:</label>
+  <input type="number" id="hashrate" min="1" value="100">
+  <button id="mineBtn">Mine</button>
+  <h2>Encoded Qubits:</h2>
+  <ul id="encodedQubits"></ul>
+</body>
+
+</html>

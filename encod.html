@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Quantum Miner</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      var encodedQubits = [];
+      var encryptedValues = [];
+
+      function encodeQubit(bit) {
+        var encodedQubit;
+        if (bit == 0) {
+          encodedQubit = "Encoded Qubit: 0";
+        } else if (bit == 1) {
+          encodedQubit = "Encoded Qubit: 1";
+        } else {
+          throw new Error("Invalid bit value");
+        }
+        encodedQubits.push(encodedQubit);
+      }
+
+      function encryptValues() {
+        for (var i = 0; i < encodedQubits.length; i++) {
+          var encryptedValue = encodeTrapdoor(encodedQubits[i]);
+          encryptedValues.push(encryptedValue);
+        }
+      }
+
+      function mine() {
+        var hashrate = parseInt($("#hashrate").val());
+        for (var i = 0; i < hashrate; i++) {
+          var bit = Math.floor(Math.random() * 2);
+          encodeQubit(bit);
+        }
+      }
+
+      $("#mineBtn").click(function () {
+        encodedQubits = [];
+        encryptedValues = [];
+        mine();
+        encryptValues();
+        storeEncodedQubits();
+        storeEncryptedValues();
+        displayEncodedQubits();
+        displayEncryptedValues();
+      });
+
+      function storeEncodedQubits() {
+        var encodedQubitsString = JSON.stringify(encodedQubits);
+        localStorage.setItem("encodedQubits", encodedQubitsString);
+      }
+
+      function storeEncryptedValues() {
+        var encryptedValuesString = JSON.stringify(encryptedValues);
+        localStorage.setItem("encryptedValues", encryptedValuesString);
+      }
+
+      function displayEncodedQubits() {
+        var encodedQubitsList = "";
+        for (var i = 0; i < encodedQubits.length; i++) {
+          encodedQubitsList += "<li>" + encodedQubits[i] + "</li>";
+        }
+        $("#encodedQubits").html(encodedQubitsList);
+      }
+
+      function displayEncryptedValues() {
+        var encryptedValuesList = "";
+        for (var i = 0; i < encryptedValues.length; i++) {
+          encryptedValuesList += "<li>" + encryptedValues[i] + "</li>";
+        }
+        $("#encryptedValues").html(encryptedValuesList);
+      }
+
+      function encodeTrapdoor(value) {
+        // Implement the encoding logic for trapdoor encryption
+        // Replace this with your actual encoding implementation
+        return "Encrypted: " + value;
+      }
+
+      function retrieveEncodedQubits() {
+        var encodedQubitsString = localStorage.getItem("encodedQubits");
+        if (encodedQubitsString) {
+          encodedQubits = JSON.parse(encodedQubitsString);
+          displayEncodedQubits();
+        }
+      }
+
+      function retrieveEncryptedValues() {
+        var encryptedValuesString = localStorage.getItem("encryptedValues");
+        if (encryptedValuesString) {
+          encryptedValues = JSON.parse(encryptedValuesString);
+          displayEncryptedValues();
+        }
+      }
+
+      // Call these functions to retrieve and display previously stored encoded qubits and encrypted values
+      retrieveEncodedQubits();
+      retrieveEncryptedValues();
+    });
+  </script>
+</head>
+
+<body>
+  <h1>Quantum Miner</h1>
+  <label for
